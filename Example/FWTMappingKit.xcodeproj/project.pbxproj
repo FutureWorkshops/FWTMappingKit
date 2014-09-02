@@ -40,19 +40,14 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
-		<key>2F8C0242B46742F5A86EFF04</key>
-		<dict>
-			<key>fileRef</key>
-			<string>F97D7C3A971946999E7C9D03</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>5C86BF968E9C43A9957177C2</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
 			<key>name</key>
 			<string>README.md</string>
 			<key>path</key>
@@ -65,6 +60,7 @@ fi
 			<key>children</key>
 			<array>
 				<string>60FF7A9C1954A5C5007DD14C</string>
+				<string>AB17D4CA19B49FD40056BFFB</string>
 				<string>6003F5B5195388D20070C39A</string>
 				<string>6003F58C195388D20070C39A</string>
 				<string>6003F58B195388D20070C39A</string>
@@ -172,8 +168,7 @@ fi
 				<string>6003F58D195388D20070C39A</string>
 				<string>6003F58F195388D20070C39A</string>
 				<string>6003F591195388D20070C39A</string>
-				<string>6003F5AF195388D20070C39A</string>
-				<string>F97D7C3A971946999E7C9D03</string>
+				<string>84E44D96B29D4372B45E96F7</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -240,10 +235,9 @@ fi
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>6003F5B0195388D20070C39A</string>
 				<string>6003F5B2195388D20070C39A</string>
 				<string>6003F5B1195388D20070C39A</string>
-				<string>2F8C0242B46742F5A86EFF04</string>
+				<string>F524FFE3F18E42A5A0FB98B4</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -256,6 +250,7 @@ fi
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
+				<string>AB17D4CC19B49FF10056BFFB</string>
 				<string>6003F5BA195388D20070C39A</string>
 			</array>
 			<key>isa</key>
@@ -299,29 +294,9 @@ fi
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>path</key>
-			<string>Tests.xctest</string>
+			<string>FWTMappingKit.xctest</string>
 			<key>sourceTree</key>
 			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>6003F5AF195388D20070C39A</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>XCTest.framework</string>
-			<key>path</key>
-			<string>Library/Frameworks/XCTest.framework</string>
-			<key>sourceTree</key>
-			<string>DEVELOPER_DIR</string>
-		</dict>
-		<key>6003F5B0195388D20070C39A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>6003F5AF195388D20070C39A</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>6003F5B1195388D20070C39A</key>
 		<dict>
@@ -430,6 +405,8 @@ fi
 		</dict>
 		<key>6003F5BD195388D20070C39A</key>
 		<dict>
+			<key>baseConfigurationReference</key>
+			<string>AB17D4CB19B49FF10056BFFB</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
@@ -503,6 +480,8 @@ fi
 		</dict>
 		<key>6003F5BE195388D20070C39A</key>
 		<dict>
+			<key>baseConfigurationReference</key>
+			<string>AB17D4CB19B49FF10056BFFB</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
@@ -685,12 +664,62 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>84E44D96B29D4372B45E96F7</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods-FWTMappingKit.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>AB17D4CA19B49FD40056BFFB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>AB17D4CB19B49FF10056BFFB</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>AB17D4CB19B49FF10056BFFB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>fw-shared.xcconfig</string>
+			<key>path</key>
+			<string>FWTMappingKit/Supporting Files/fw-shared.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>AB17D4CC19B49FF10056BFFB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>AB17D4CB19B49FF10056BFFB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>BC085EE753B546F48E42C1DA</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
 			<key>name</key>
 			<string>FWTMappingKit.podspec</string>
 			<key>path</key>
@@ -704,6 +733,8 @@ fi
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
 			<key>name</key>
 			<string>LICENSE</string>
 			<key>path</key>
@@ -735,18 +766,12 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
-		<key>F97D7C3A971946999E7C9D03</key>
+		<key>F524FFE3F18E42A5A0FB98B4</key>
 		<dict>
-			<key>explicitFileType</key>
-			<string>archive.ar</string>
-			<key>includeInIndex</key>
-			<string>0</string>
+			<key>fileRef</key>
+			<string>84E44D96B29D4372B45E96F7</string>
 			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>libPods-FWTMappingKit.a</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
+			<string>PBXBuildFile</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>

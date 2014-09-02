@@ -193,9 +193,4 @@ static NSMutableDictionary *FWTMappingKitVerificationTransformerDict = nil;
     return nil;
 }
 
-+ (NSDictionary *)nonDefaultVerificationTypes
-{
-    return nil;
-}
-
 @end

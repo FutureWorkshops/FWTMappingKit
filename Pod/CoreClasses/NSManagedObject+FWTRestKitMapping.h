@@ -6,23 +6,11 @@
 //
 //
 
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 #import <CoreData/CoreData.h>
 #import "RKEntityMapping+FWTMappingExtensions.h"
 #import "FWTMappingConfiguration.h"
-
-typedef NS_ENUM(NSInteger, MOIPropertyVerifcationType) {
-    
-    MOIPropertyVerifcationTypeIgnore = -1,
-    MOIPropertyVerifcationTypeDefaultInference,
-    MOIPropertyVerifcationTypeString, // default for strings
-    MOIPropertyVerifcationTypeNumber, // default for numbers
-    MOIPropertyVerifcationTypeBoolTrueFalse, // default for bools
-    MOIPropertyVerifcationTypeBoolYN,
-    MOIPropertyVerifcationTypeBoolYesNo,
-    MOIPropertyVerifcationTypeDateGregorian, // default for dates
-    MOIPropertyVerifcationTypeDateHijri,
-    MOIPropertyVerifcationTypeDateHijriCondensed,
-};
 
 @interface NSManagedObject (FWTRestKitMapping)
 
@@ -47,8 +35,5 @@ typedef NS_ENUM(NSInteger, MOIPropertyVerifcationType) {
 // override to provide custom configurations (instances of MOIMappingConfiguration) to aid mapping back and forth between source and destination respresentations
 // if a matching configuration is not found, default transformers will be used
 + (NSArray *)fwt_customPropertyMappingConfigurationsForMappingKey:(NSString *)mappingKey;
-
-// aid for unit testing
-+ (NSDictionary *)nonDefaultVerificationTypes; // determines the type conversion from the mapped value back to a string for comparison with the JSON property
 
 @end

@@ -6,6 +6,8 @@
 //
 //
 
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 #import "RKEntityMapping.h"
 
 @interface RKEntityMapping (FWTMappingExtensions)

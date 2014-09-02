@@ -27,12 +27,23 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  s.source_files = 'Pod/Classes'
-  s.resource_bundles = {
-    'FWTMappingKit' => ['Pod/Assets/*.png']
-  }
+  s.default_subspecs = 'Core'
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  ### Subspecs
+  
+  s.subspec 'Core' do |cs|
+    cs.source_files = 'Pod/CoreClasses'
+    cs.header_dir   = 'Pod/CoreClasses'
+    
+    cs.dependency     'RestKit', '~> 0.23.x'
+  end
+  
+  s.subspec 'Testing' do |ts|
+    ts.header_dir   = 'Pod/TestClasses'
+    ts.source_files = 'Pod/TestClasses'
+    
+    ts.frameworks   = 'XCTest'
+    ts.dependency     'FWTMappingKit/Core'
+  end
+
 end
