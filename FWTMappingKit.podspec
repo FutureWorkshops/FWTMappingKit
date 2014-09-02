@@ -35,18 +35,20 @@ Pod::Spec.new do |s|
   ### Subspecs
   
   s.subspec 'Core' do |cs|
-    cs.source_files = 'Pod/CoreClasses'
-    cs.header_dir   = 'Pod/CoreClasses'
-    
-    cs.dependency     'RestKit', '~> 0.23.x'
+    cs.header_dir   = 'FWTMappingKit/Core'
+    cs.source_files = 'FWTMappingKit/Core'
+
+    cs.dependency     'RestKit', '~> 0.23'
+    cs.dependency     'RestKit/Testing', '~> 0.23'
+    cs.dependency     'TransformerKit'
   end
   
   s.subspec 'Testing' do |ts|
-    ts.header_dir   = 'Pod/TestClasses'
-    ts.source_files = 'Pod/TestClasses'
+    ts.header_dir   = 'FWTMappingKit/Testing'
+    ts.source_files = 'FWTMappingKit/Testing'
     
     ts.frameworks   = 'XCTest'
-    ts.dependency     'FWTMappingKit/Core'
+#   ts.dependency     'FWTMappingKit/Core'
   end
 
 end

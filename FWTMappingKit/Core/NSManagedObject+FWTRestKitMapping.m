@@ -165,8 +165,11 @@ static NSMutableDictionary *FWTMappingKitVerificationTransformerDict = nil;
     
     if (!mapping) {
         
+        RKObjectManager *manager = [RKObjectManager sharedManager];
+        RKManagedObjectStore *store = [manager managedObjectStore];
+        
         mapping = [RKEntityMapping mappingForEntityForName:NSStringFromClass([self class])
-                                      inManagedObjectStore:[[RKObjectManager sharedManager] managedObjectStore]];
+                                      inManagedObjectStore:store];
         
         [RKEntityMapping fwt_setCachedEntityMapping:mapping forKey:mappingKey];
         

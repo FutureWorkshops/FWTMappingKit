@@ -6,8 +6,6 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-
 @interface FWTMappingConfiguration : NSObject
 
 @property (nonatomic, readonly) NSString *sourceKey;
