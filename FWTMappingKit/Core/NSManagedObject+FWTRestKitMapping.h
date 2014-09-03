@@ -34,4 +34,7 @@
 // if a matching configuration is not found, default transformers will be used
 + (NSArray *)fwt_customPropertyMappingConfigurationsForMappingKey:(NSString *)mappingKey;
 
+- (void)verifyPropertyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
+                                     withMappingKey:(NSString *)mappingKey;
+
 @end

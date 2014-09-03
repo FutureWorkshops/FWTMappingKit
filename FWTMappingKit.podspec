@@ -40,12 +40,5 @@ Pod::Spec.new do |s|
     cs.dependency     'RestKit', '~> 0.23.3'
     cs.dependency     'TransformerKit'
   end
-  
-  s.subspec 'Testing' do |ts|
-    ts.header_dir   = 'FWTMappingKit/Testing'
-    ts.source_files = 'FWTMappingKit/Testing'
-    
-    ts.frameworks   = 'XCTest'
-  end
 
 end
