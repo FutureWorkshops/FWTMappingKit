@@ -5,7 +5,7 @@ PODS:
     - FWTMappingKit/Core
   - FWTMappingKit/Core (0.1.0):
     - RestKit (~> 0.23)
-    - RestKit/Testing (~> 0.23)
+    - RestKit/Testing
     - TransformerKit
   - FWTMappingKit/Testing (0.1.0)
   - ISO8601DateFormatterValueTransformer (0.6.0):
@@ -70,7 +70,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 80c4e0652b08eb34e25b9c0ff3c82556fe5967b4
   Expecta: 03aabd0a89d8dea843baecb19a7fd7466a69a31d
-  FWTMappingKit: c489d43c357db7a9df6da27699a9c7bd98abd49a
+  FWTMappingKit: 43f9a719d239c59c821fd65830264d47950ccfea
   ISO8601DateFormatterValueTransformer: a705384ea6531255258e25b6480ba1180db703a0
   RestKit: 193a35cddae5198388977abaedad129f8acb978b
   RKValueTransformers: b705e7b4651b9206b94600408462b74554bba969

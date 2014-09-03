@@ -37,8 +37,7 @@ Pod::Spec.new do |s|
     cs.header_dir   = 'FWTMappingKit'
     cs.source_files = 'FWTMappingKit/Core'
 
-    cs.dependency     'RestKit', '~> 0.23'
-    cs.dependency     'RestKit/Testing'
+    cs.dependency     'RestKit', '~> 0.23.3'
     cs.dependency     'TransformerKit'
   end
   
@@ -47,7 +46,6 @@ Pod::Spec.new do |s|
     ts.source_files = 'FWTMappingKit/Testing'
     
     ts.frameworks   = 'XCTest'
-#    ts.dependency     'FWTMappingKit/Core'
   end
 
 end
