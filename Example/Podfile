@@ -1,6 +1,6 @@
 
 target 'FWTMappingKit', :exclusive => true do
-    #pod "FWTMappingKit", :path => "../"
+  pod "FWTMappingKit", :path => "../"
   pod "FWTMappingKit/Testing", :path => "../"
 
   pod 'Specta', '~> 0.2.1'

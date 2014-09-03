@@ -20,12 +20,11 @@ Pod::Spec.new do |s|
                        
                        WARNING: FWTMappingKit works best for large models and fairly consistent source representations, and may not be suitable for all mapping requirements. For small models it may be more conventient just to configure the mappings manually yourself.
                        DESC
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/FWTMappingKit"
-  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
+  s.homepage         = "https://github.com/FutureWorkshops/FWTMappingKit"
   s.license          = 'MIT'
   s.author           = { "Jonathan Flintham" => "jonathan@futureworkshops.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/FWTMappingKit.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => "https://github.com/FutureWorkshops/FWTMappingKit.git", :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/@FutureWorkshops'
 
   s.platform     = :ios, '7.0'
   s.requires_arc = true
@@ -35,11 +34,11 @@ Pod::Spec.new do |s|
   ### Subspecs
   
   s.subspec 'Core' do |cs|
-    cs.header_dir   = 'FWTMappingKit/Core'
+    cs.header_dir   = 'FWTMappingKit'
     cs.source_files = 'FWTMappingKit/Core'
 
     cs.dependency     'RestKit', '~> 0.23'
-    cs.dependency     'RestKit/Testing', '~> 0.23'
+    cs.dependency     'RestKit/Testing'
     cs.dependency     'TransformerKit'
   end
   
@@ -48,7 +47,7 @@ Pod::Spec.new do |s|
     ts.source_files = 'FWTMappingKit/Testing'
     
     ts.frameworks   = 'XCTest'
-#   ts.dependency     'FWTMappingKit/Core'
+#    ts.dependency     'FWTMappingKit/Core'
   end
 
 end

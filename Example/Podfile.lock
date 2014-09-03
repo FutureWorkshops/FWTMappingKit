@@ -1,13 +1,13 @@
 PODS:
   - AFNetworking (1.3.4)
   - Expecta (0.3.1)
-  - FWTMappingKit/Core (0.1.0):
-    - RestKit (~> 0.23.x)
-    - RestKit/CoreData
-    - TransformerKit
-  - FWTMappingKit/Testing (0.1.0):
+  - FWTMappingKit (0.1.0):
     - FWTMappingKit/Core
-    - RestKit/Testing
+  - FWTMappingKit/Core (0.1.0):
+    - RestKit (~> 0.23)
+    - RestKit/Testing (~> 0.23)
+    - TransformerKit
+  - FWTMappingKit/Testing (0.1.0)
   - ISO8601DateFormatterValueTransformer (0.6.0):
     - RKValueTransformers (~> 1.1.0)
   - RestKit (0.23.3):
@@ -59,6 +59,7 @@ PODS:
 
 DEPENDENCIES:
   - Expecta
+  - FWTMappingKit (from `../`)
   - FWTMappingKit/Testing (from `../`)
   - Specta (~> 0.2.1)
 
@@ -69,7 +70,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 80c4e0652b08eb34e25b9c0ff3c82556fe5967b4
   Expecta: 03aabd0a89d8dea843baecb19a7fd7466a69a31d
-  FWTMappingKit: 73a6b7125611dc3a64d2ac6607b5dfa4e981d49e
+  FWTMappingKit: c489d43c357db7a9df6da27699a9c7bd98abd49a
   ISO8601DateFormatterValueTransformer: a705384ea6531255258e25b6480ba1180db703a0
   RestKit: 193a35cddae5198388977abaedad129f8acb978b
   RKValueTransformers: b705e7b4651b9206b94600408462b74554bba969
