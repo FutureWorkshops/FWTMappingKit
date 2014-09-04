@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/FutureWorkshops/FWTMappingKit"
   s.license          = 'MIT'
   s.author           = { "Jonathan Flintham" => "jonathan@futureworkshops.com" }
-  s.source           = { :git => "https://github.com/FutureWorkshops/FWTMappingKit.git", :tag => s.version.to_s }
+  s.source           = { :git => "git@github.com:FutureWorkshops/FWTMappingKit.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/@FutureWorkshops'
 
   s.platform     = :ios, '7.0'
