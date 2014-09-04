@@ -6,8 +6,6 @@
 //
 //
 
-#import <MobileCoreServices/MobileCoreServices.h>
-#import <SystemConfiguration/SystemConfiguration.h>
 #import <CoreData/CoreData.h>
 #import "RKEntityMapping+FWTMappingExtensions.h"
 #import "FWTMappingConfiguration.h"
@@ -32,8 +30,11 @@
 // override to configure the mapping for a nesting attribute key (i.e. using RKEntityMapping method addAttributeMappingFromKeyOfRepresentationToAttribute)
 + (NSString *)fwt_nestingAttributeKey;
 
-// override to provide custom configurations (instances of MOIMappingConfiguration) to aid mapping back and forth between source and destination respresentations
+// override to provide custom configurations (instances of FWTMappingConfiguration) to aid mapping back and forth between source and destination respresentations
 // if a matching configuration is not found, default transformers will be used
 + (NSArray *)fwt_customPropertyMappingConfigurationsForMappingKey:(NSString *)mappingKey;
+
+- (void)verifyPropertyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
+                                     withMappingKey:(NSString *)mappingKey;
 
 @end
