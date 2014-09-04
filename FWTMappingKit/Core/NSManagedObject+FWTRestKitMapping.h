@@ -34,7 +34,14 @@
 // if a matching configuration is not found, default transformers will be used
 + (NSArray *)fwt_customPropertyMappingConfigurationsForMappingKey:(NSString *)mappingKey;
 
-- (void)verifyPropertyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
-                                     withMappingKey:(NSString *)mappingKey;
+#pragma mark - Verification
+
+// verify mapping against deserialized source representation - will raise exception for mismatches
+- (void)verifyMappingFromSource:(NSDictionary *)deserializedObject
+                  forMappingKey:(NSString *)mappingKey;
+
+// override to provide custom property equivalence checking during verification, e.g. BOOL values can come from a variety of string sources, 'yes', 'y', 'true', '1', etc.
+// the default implementation provides some basic checking, i.e. you can call super for properties where custom checking is not required
+- (BOOL)isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKey equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey;
 
 @end
