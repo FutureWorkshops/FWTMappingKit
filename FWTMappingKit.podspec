@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   
   s.subspec 'Core' do |cs|
     cs.header_dir   = 'FWTMappingKit'
-    cs.source_files = 'FWTMappingKit/Core'
+    cs.source_files = 'FWTMappingKit'
 
     cs.dependency     'RestKit', '~> 0.23'
     cs.dependency     'TransformerKit'
