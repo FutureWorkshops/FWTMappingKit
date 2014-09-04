@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "FWTMappingKit"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "FWTMappingKit - RestKit mapping via CoreData model reflection."
   s.description      = <<-DESC
                        FWTMappingKit is a suite of extensions and supporting classes that can produce RKEntityMappings for NSManagedObjects by reflecting against their associated NSEntityDescription, hopefully avoiding the need to specify these mappings explicitely.
