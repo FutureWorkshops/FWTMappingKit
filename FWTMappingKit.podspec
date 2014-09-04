@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "FWTMappingKit"
-  s.version          = "0.1.1"
+  s.version          = "0.1.2"
   s.summary          = "FWTMappingKit - RestKit mapping via CoreData model reflection."
   s.homepage         = "https://github.com/FutureWorkshops/FWTMappingKit"
   s.license          = 'MIT'
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     cs.header_dir   = 'FWTMappingKit'
     cs.source_files = 'FWTMappingKit/Core'
 
-    cs.dependency     'RestKit', '~> 0.23.3'
+    cs.dependency     'RestKit', '~> 0.23'
     cs.dependency     'TransformerKit'
   end
 
