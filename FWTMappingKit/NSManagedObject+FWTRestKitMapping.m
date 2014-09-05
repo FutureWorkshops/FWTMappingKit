@@ -75,7 +75,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 {
     NSArray *customMappingConfigurations = [self fwt_customPropertyMappingConfigurationsForMappingKey:mappingKey];
     
-    NSString *sourceKeyPath = nil;
+    __block NSString *sourceKeyPath = nil;
     
     // look for a mappingConfiguration for this attribute
     NSUInteger matchingIndex = [customMappingConfigurations indexOfObjectPassingTest:^BOOL(FWTMappingConfiguration *obj, NSUInteger idx, BOOL *stop2) {
@@ -106,6 +106,16 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         sourceKeyPath = destinationKey;
     }
     
+    // check for a mappingConfiguration with an empty destinationKey - we should ignore these
+    [customMappingConfigurations enumerateObjectsUsingBlock:^(FWTMappingConfiguration *obj, NSUInteger idx, BOOL *stop) {
+        *stop = [obj.sourceKeyPath isEqualToString:sourceKeyPath];
+        if (*stop) {
+            if (!obj.destinationKey || [obj.destinationKey length] == 0) {
+                sourceKeyPath = nil;
+            }
+        }
+    }];
+    
     return sourceKeyPath;
 }
 
@@ -119,7 +129,9 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     [attributesDict enumerateKeysAndObjectsUsingBlock:^(id attributeKey, id attributeValue, BOOL *stop) {
 
         NSString *sourceKeyPath = [self sourceKeyPathForDestinationKey:attributeKey mappingKey:mappingKey relationshipMappingKey:NULL];
-        mappings[sourceKeyPath] = attributeKey;
+        if (sourceKeyPath) {
+            mappings[sourceKeyPath] = attributeKey;
+        }
     }];
     
     [mapping addAttributeMappingsFromDictionary:mappings];
@@ -144,8 +156,10 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
             
             NSString *sourceKeyPath = [self sourceKeyPathForDestinationKey:relationshipName mappingKey:mappingKey relationshipMappingKey:&relationshipMappingKey];
             
-            RKRelationshipMapping *destinationRelationshipMapping = [RKRelationshipMapping relationshipMappingFromKeyPath:sourceKeyPath toKeyPath:relationshipName withMapping:[destinationEntityClass fwt_entityMappingForKey:relationshipMappingKey]];
-            [relationshipPropertyMappings addObject:destinationRelationshipMapping];
+            if (sourceKeyPath) {
+                RKRelationshipMapping *destinationRelationshipMapping = [RKRelationshipMapping relationshipMappingFromKeyPath:sourceKeyPath toKeyPath:relationshipName withMapping:[destinationEntityClass fwt_entityMappingForKey:relationshipMappingKey]];
+                [relationshipPropertyMappings addObject:destinationRelationshipMapping];
+            }
         }
         
         [mapping addPropertyMappingsFromArray:relationshipPropertyMappings];
@@ -347,8 +361,8 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 }
 
 - (void)_fwt_verifyPropertyMappingFromArray:(NSArray *)deserializedArray
-                            toMappedSet:(NSSet *)mappedSet
-                          forMappingKey:(NSString *)mappingKey;
+                                toMappedSet:(NSSet *)mappedSet
+                              forMappingKey:(NSString *)mappingKey;
 {
     if ([deserializedArray count] != [mappedSet count]) {
         [NSException raise:NSInternalInconsistencyException format:@"%@ and %@ should contain the same number of items", deserializedArray, mappedSet];
