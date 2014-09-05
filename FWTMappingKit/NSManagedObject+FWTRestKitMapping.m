@@ -205,14 +205,9 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 - (void)fwt_verifyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
                                   forMappingKey:(NSString *)mappingKey
 {
-    if (!deserializedObject) {
-        [NSException raise:NSInternalInconsistencyException format:@"deserializedObject should not be nil"];
+    if (![deserializedObject isKindOfClass:[NSDictionary class]]) {
+        [NSException raise:NSInternalInconsistencyException format:@"deserializedObject should be a dictionary"];
     }
-
-    // why was this here again?
-//    if ([deserializedObject isEqual:[NSNull null]]) {
-//        return;
-//    }
     
     NSString *nestingAttributeKey = [[self class] fwt_nestingAttributeKey];
     NSArray *customMappingConfigurations = [[self class] fwt_customPropertyMappingConfigurationsForMappingKey:mappingKey];
