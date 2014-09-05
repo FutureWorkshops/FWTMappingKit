@@ -53,4 +53,9 @@
     return [configurations copy];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@: sourceKeyPath: '%@', destinationKey: '%@', relationshipMappingKey: '%@'", [super description], self.sourceKeyPath, self.destinationKey, self.relationshipMappingKey];
+}
+
 @end
