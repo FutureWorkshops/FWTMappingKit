@@ -10,7 +10,6 @@
 
 @interface FWTMappingConfiguration ()
 
-@property (nonatomic, strong, readwrite) NSString *sourceKey;
 @property (nonatomic, strong, readwrite) NSString *sourceKeyPath;
 @property (nonatomic, strong, readwrite) NSString *destinationKey;
 @property (nonatomic, strong, readwrite) NSString *relationshipMappingKey;
@@ -19,46 +18,35 @@
 
 @implementation FWTMappingConfiguration
 
-- (instancetype)initWithSourceKey:(NSString *)sourceKey mappedToDestinationKey:(NSString *)destinationKey viaSourceKeyPath:(NSString *)sourceKeyPath relationshipMappingKey:(NSString *)relationshipMappingKey
+- (instancetype)initWithSourceKeyPath:(NSString *)sourceKeyPath mappedToDestinationKey:(NSString *)destinationKey withRelationshipMappingKey:(NSString *)relationshipMappingKey
 {
     self = [super init];
     if (self) {
-        NSAssert([sourceKey length] > 0 && [destinationKey length] > 0, @"Must provide valid sourceKey and destinationKey");
+        NSAssert([sourceKeyPath length] > 0, @"Must provide valid sourceKeyPath"); // a nil or empty destinationKey means that this sourceKeyPath will not be mapped, i.e. ignored
         
-        self.sourceKey = sourceKey;
-        self.destinationKey = destinationKey;
         self.sourceKeyPath = sourceKeyPath;
+        self.destinationKey = destinationKey;
         self.relationshipMappingKey = relationshipMappingKey;
     }
     return self;
 }
 
-- (instancetype)initWithSourceKey:(NSString *)sourceKey mappedToDestinationKey:(NSString *)destinationKey viaSourceKeyPath:(NSString *)sourceKeyPath
+- (instancetype)initWithSourceKeyPath:(NSString *)sourceKeyPath mappedToDestinationKey:(NSString *)destinationKey
 {
-    return [self initWithSourceKey:sourceKey mappedToDestinationKey:destinationKey viaSourceKeyPath:sourceKeyPath relationshipMappingKey:nil];
+    return [self initWithSourceKeyPath:sourceKeyPath mappedToDestinationKey:destinationKey withRelationshipMappingKey:nil];
 }
 
 - (instancetype)init
 {
-    return [self initWithSourceKey:nil mappedToDestinationKey:nil viaSourceKeyPath:nil relationshipMappingKey:nil]; // will raise assert
-}
-
-- (NSString *)sourceKeyPath
-{
-    if (self->_sourceKeyPath) {
-        return self->_sourceKeyPath;
-    }
-    else {
-        return self.sourceKey; // default to sourceKey
-    }
+    return [self initWithSourceKeyPath:nil mappedToDestinationKey:nil]; // will raise assert
 }
 
 // convenience for simple mapping configurations
 + (NSArray *)mappingConfigurationsFromDictionary:(NSDictionary *)dictionary
 {
     NSMutableArray *configurations = [NSMutableArray arrayWithCapacity:[dictionary count]];
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *sourceKey, NSString *destinationKey, BOOL *stop) {
-        FWTMappingConfiguration *configuration = [[FWTMappingConfiguration alloc] initWithSourceKey:sourceKey mappedToDestinationKey:destinationKey viaSourceKeyPath:nil relationshipMappingKey:nil];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *sourceKeyPath, NSString *destinationKey, BOOL *stop) {
+        FWTMappingConfiguration *configuration = [[FWTMappingConfiguration alloc] initWithSourceKeyPath:sourceKeyPath mappedToDestinationKey:destinationKey withRelationshipMappingKey:nil];
         [configurations addObject:configuration];
     }];
     

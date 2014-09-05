@@ -202,8 +202,8 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 
 #pragma mark - Verification
 
-- (void)verifyMappingFromSource:(NSDictionary *)deserializedObject
-                  forMappingKey:(NSString *)mappingKey
+- (void)fwt_verifyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
+                                  forMappingKey:(NSString *)mappingKey
 {
     if (!deserializedObject) {
         [NSException raise:NSInternalInconsistencyException format:@"deserializedObject should not be nil"];
@@ -217,120 +217,141 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     NSString *nestingAttributeKey = [[self class] fwt_nestingAttributeKey];
     NSArray *customMappingConfigurations = [[self class] fwt_customPropertyMappingConfigurationsForMappingKey:mappingKey];
     
-    for (NSString *sourceKey in [deserializedObject allKeys]) {
+    for (NSString *rootSourceKey in [deserializedObject allKeys]) {
         
+        __block BOOL hasVerifiedMappingForRootSourceKey = NO;
         NSString *sourceKeyPath = nil;
         NSString *destinationKey = nil;
         NSString *relationshipMappingKey = mappingKey;
         
-        if ([sourceKey isEqualToString:FWTMappingKitNestingAttributeVerificationKey]) {
+        if ([rootSourceKey isEqualToString:FWTMappingKitNestingAttributeVerificationKey]) {
             
             if (!nestingAttributeKey)
                 continue; // we only care about this property if the mapping is configured for it
             
-            sourceKeyPath = sourceKey;
+            sourceKeyPath = rootSourceKey;
             destinationKey = nestingAttributeKey;
         }
         else {
             // look for a mappingConfiguration for this sourceKey
-            NSUInteger matchingIndex = [customMappingConfigurations indexOfObjectPassingTest:^BOOL(FWTMappingConfiguration *obj, NSUInteger idx, BOOL *stop2) {
-                *stop2 = [obj.sourceKey isEqualToString:sourceKey];
-                return *stop2;
+            NSIndexSet *matchingIndexes = [customMappingConfigurations indexesOfObjectsPassingTest:^BOOL(FWTMappingConfiguration *obj, NSUInteger idx, BOOL *stop2) {
+                NSArray *components = [obj.sourceKeyPath componentsSeparatedByString:@"."];
+                return [components[0] isEqualToString:rootSourceKey];
             }];
-            if (customMappingConfigurations && matchingIndex != NSNotFound) {
-                FWTMappingConfiguration *mappingConfiguration = customMappingConfigurations[matchingIndex];
-                sourceKeyPath = mappingConfiguration.sourceKeyPath;
-                destinationKey = mappingConfiguration.destinationKey;
-                relationshipMappingKey = mappingConfiguration.relationshipMappingKey;
-            }
+            [matchingIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                FWTMappingConfiguration *mappingConfiguration = customMappingConfigurations[idx];
+                NSString *sourceKeyPath = mappingConfiguration.sourceKeyPath;
+                NSString *destinationKey = mappingConfiguration.destinationKey;
+                NSString *relationshipMappingKey = mappingConfiguration.relationshipMappingKey;
+                
+                hasVerifiedMappingForRootSourceKey = hasVerifiedMappingForRootSourceKey || [sourceKeyPath isEqualToString:rootSourceKey];
+                
+                if (!destinationKey || [destinationKey length] == 0) {
+                    NSLog(@"Ignoring sourceKeyPath '%@' while mapping to object of class %@ - destinationKey is nil or empty", sourceKeyPath, NSStringFromClass([self class]));
+                    return;
+                }
+                
+                [self _fwt_verifyMappingFromDeserializedObjectKeyPath:sourceKeyPath inDeserializedObject:deserializedObject toDestinationKey:destinationKey withRelationshipMappingKey:relationshipMappingKey forMappingKey:mappingKey];
+            }];
             
             // look for a default transformer
-            else if ([[self class] fwt_sourceToDestinationKeyValueTransformer]) {
+            if (!hasVerifiedMappingForRootSourceKey && [[self class] fwt_sourceToDestinationKeyValueTransformer]) {
                 NSValueTransformer *valueTransformer = [[self class] fwt_sourceToDestinationKeyValueTransformer];
-                destinationKey = [valueTransformer transformedValue:sourceKey];
-                sourceKeyPath = sourceKey;
+                destinationKey = [valueTransformer transformedValue:rootSourceKey];
+                sourceKeyPath = rootSourceKey;
             }
         }
         
-        if (![self respondsToSelector:NSSelectorFromString(destinationKey)]) {
-            NSLog(@"Skipping %@ - destination property %@ not found in mappedObject of class %@", sourceKeyPath, destinationKey, NSStringFromClass([self class]));
-            continue;
-        }
-        
-        id sourceValue = [deserializedObject valueForKeyPath:sourceKeyPath];
-        id destinationValue = [self valueForKey:destinationKey];
-        
-        // verify null to-many relationships
-        if ([sourceValue isEqual:[NSNull null]] && [destinationValue isKindOfClass:[NSSet class]]) {
-            if ([destinationValue count] > 0) {
-                [NSException raise:NSInternalInconsistencyException format:@"%@ -> %@ : Should be no items in mapped set '%@' because sourceValue is null", sourceKeyPath, destinationKey, destinationValue];
-            }
-        }
-        
-        // verify property (or nil property or nil to-one relationship)
-        else if ([sourceValue isKindOfClass:[NSString class]] || [sourceValue isEqual:[NSNull null]]) {
-            
-            if (!destinationValue) {
-                if (sourceValue != [NSNull null]) {
-                    [NSException raise:NSInternalInconsistencyException format:@"Failed to transform '%@' with sourceKey '%@' for destinationKey '%@'", sourceValue, sourceKey, destinationKey];
-                }
-                continue;
-            }
-            
-            if (![self isSourceValue:sourceValue withSourceKeyPath:sourceKeyPath equalToDestinationValue:destinationValue withDestinationKey:destinationKey forMappingKey:mappingKey]) {
-                [NSException raise:NSInternalInconsistencyException format:@"Mapped value not equal for sourceKey '%@' mapped to destinationKey '%@' on class %@", sourceKey, destinationKey, NSStringFromClass([self class])];
-            }
-        }
-        
-        // verify object
-        else if ([sourceValue isKindOfClass:[NSDictionary class]]) {
-            
-            // check for objects mapped into collections
-            if ([destinationValue isKindOfClass:[NSSet class]]) {
-                
-                if ([destinationValue count] == 0) {
-                    [NSException raise:NSInternalInconsistencyException format:@"There should be at least one object mapped from collection %@ to relationship %@", sourceValue, destinationValue];
-                }
-                
-                NSArray *array = nil;
-                
-                // check for nesting attribute key collections
-                id sampleObject = [destinationValue anyObject];
-                if ([[sampleObject class] fwt_nestingAttributeKey]) {
-                    
-                    array = [NSMutableArray arrayWithCapacity:[sourceValue count]];
-                    for (NSString *key in [sourceValue allKeys])
-                    {
-                        NSMutableDictionary *value = sourceValue[key];
-                        value[FWTMappingKitNestingAttributeVerificationKey] = key;
-                        [(NSMutableArray *)array addObject:value];
-                    }
-                }
-                else {
-                    array = @[sourceValue];
-                }
-                
-                if (![array isKindOfClass:[NSArray class]]) {
-                    [NSException raise:NSInternalInconsistencyException format:@"Object mapped from '%@' to '%@' should be an array", sourceKeyPath, destinationKey];
-                }
-                
-                [self _verifyPropertyMappingFromArray:array toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
-                
-                continue;
-            }
-            
-            [destinationValue verifyMappingFromSource:sourceValue forMappingKey:relationshipMappingKey];
-        }
-        
-        // verify array
-        else if ([sourceValue isKindOfClass:[NSArray class]]) {
-            
-            [self _verifyPropertyMappingFromArray:sourceValue toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
+        if (!hasVerifiedMappingForRootSourceKey) {
+            [self _fwt_verifyMappingFromDeserializedObjectKeyPath:sourceKeyPath inDeserializedObject:deserializedObject toDestinationKey:destinationKey withRelationshipMappingKey:relationshipMappingKey forMappingKey:mappingKey];
         }
     }
 }
 
-- (void)_verifyPropertyMappingFromArray:(NSArray *)deserializedArray
+- (void)_fwt_verifyMappingFromDeserializedObjectKeyPath:(NSString *)sourceKeyPath
+                                   inDeserializedObject:(NSDictionary *)deserializedObject
+                                       toDestinationKey:(NSString *)destinationKey
+                             withRelationshipMappingKey:(NSString *)relationshipMappingKey
+                                          forMappingKey:(NSString *)mappingKey
+{
+    if (![self respondsToSelector:NSSelectorFromString(destinationKey)]) {
+        NSLog(@"Skipping sourceKeyPath '%@' - destination property '%@' not found in mappedObject of class %@", sourceKeyPath, destinationKey, NSStringFromClass([self class]));
+        return;
+    }
+    
+    id sourceValue = [deserializedObject valueForKeyPath:sourceKeyPath];
+    id destinationValue = [self valueForKey:destinationKey];
+    
+    // verify null to-many relationships
+    if ([sourceValue isEqual:[NSNull null]] && [destinationValue isKindOfClass:[NSSet class]]) {
+        if ([destinationValue count] > 0) {
+            [NSException raise:NSInternalInconsistencyException format:@"%@ -> %@ : Should be no items in mapped set '%@' because sourceValue is null", sourceKeyPath, destinationKey, destinationValue];
+        }
+    }
+    
+    // verify property (or nil property or nil to-one relationship)
+    else if ([sourceValue isKindOfClass:[NSString class]] || [sourceValue isEqual:[NSNull null]]) {
+        
+        if (!destinationValue) {
+            if (sourceValue != [NSNull null]) {
+                [NSException raise:NSInternalInconsistencyException format:@"Failed to transform '%@' with sourceKeyPath '%@' for destinationKey '%@'", sourceValue, sourceKeyPath, destinationKey];
+            }
+            return;
+        }
+        
+        if (![self fwt_isSourceValue:sourceValue withSourceKeyPath:sourceKeyPath equalToDestinationValue:destinationValue withDestinationKey:destinationKey forMappingKey:mappingKey]) {
+            [NSException raise:NSInternalInconsistencyException format:@"Mapped value not equal for sourceKeyPath '%@' mapped to destinationKey '%@' on class %@", sourceKeyPath, destinationKey, NSStringFromClass([self class])];
+        }
+    }
+    
+    // verify object
+    else if ([sourceValue isKindOfClass:[NSDictionary class]]) {
+        
+        // check for objects mapped into collections
+        if ([destinationValue isKindOfClass:[NSSet class]]) {
+            
+            if ([destinationValue count] == 0) {
+                [NSException raise:NSInternalInconsistencyException format:@"There should be at least one object mapped from collection %@ to relationship %@", sourceValue, destinationValue];
+            }
+            
+            NSArray *array = nil;
+            
+            // check for nesting attribute key collections
+            id sampleObject = [destinationValue anyObject];
+            if ([[sampleObject class] fwt_nestingAttributeKey]) {
+                
+                array = [NSMutableArray arrayWithCapacity:[sourceValue count]];
+                for (NSString *key in [sourceValue allKeys])
+                {
+                    NSMutableDictionary *value = sourceValue[key];
+                    value[FWTMappingKitNestingAttributeVerificationKey] = key;
+                    [(NSMutableArray *)array addObject:value];
+                }
+            }
+            else {
+                array = @[sourceValue];
+            }
+            
+            if (![array isKindOfClass:[NSArray class]]) {
+                [NSException raise:NSInternalInconsistencyException format:@"Object mapped from '%@' to '%@' should be an array", sourceKeyPath, destinationKey];
+            }
+            
+            [self _fwt_verifyPropertyMappingFromArray:array toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
+            
+            return;
+        }
+        
+        [destinationValue fwt_verifyMappingFromDeserializedObject:sourceValue forMappingKey:relationshipMappingKey];
+    }
+    
+    // verify array
+    else if ([sourceValue isKindOfClass:[NSArray class]]) {
+        
+        [self _fwt_verifyPropertyMappingFromArray:sourceValue toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
+    }
+}
+
+- (void)_fwt_verifyPropertyMappingFromArray:(NSArray *)deserializedArray
                             toMappedSet:(NSSet *)mappedSet
                           forMappingKey:(NSString *)mappingKey;
 {
@@ -352,11 +373,11 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         
         id destinationObject = destinationArray[index];
         
-        [destinationObject verifyMappingFromSource:sourceObject forMappingKey:mappingKey];
+        [destinationObject fwt_verifyMappingFromDeserializedObject:sourceObject forMappingKey:mappingKey];
     }
 }
 
-- (BOOL)isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKey equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey
+- (BOOL)fwt_isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKey equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey
 {
     // default implementation
     
