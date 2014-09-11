@@ -127,7 +127,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     
     NSMutableDictionary *mappings = [NSMutableDictionary dictionaryWithCapacity:[attributesDict count]];
     [attributesDict enumerateKeysAndObjectsUsingBlock:^(id attributeKey, id attributeValue, BOOL *stop) {
-
+        
         NSString *sourceKeyPath = [self sourceKeyPathForDestinationKey:attributeKey mappingKey:mappingKey relationshipMappingKey:NULL];
         if (sourceKeyPath) {
             mappings[sourceKeyPath] = attributeKey;
@@ -301,14 +301,8 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     // verify property (or nil property or nil to-one relationship)
     else if ([sourceValue isKindOfClass:[NSString class]] || [sourceValue isEqual:[NSNull null]]) {
         
-        if (!destinationValue) {
-            if (sourceValue != [NSNull null]) {
-                [NSException raise:NSInternalInconsistencyException format:@"Failed to transform '%@' with sourceKeyPath '%@' for destinationKey '%@'", sourceValue, sourceKeyPath, destinationKey];
-            }
-            return;
-        }
-        
         if (![self fwt_isSourceValue:sourceValue withSourceKeyPath:sourceKeyPath equalToDestinationValue:destinationValue withDestinationKey:destinationKey forMappingKey:mappingKey]) {
+            
             [NSException raise:NSInternalInconsistencyException format:@"Mapped value not equal for sourceKeyPath '%@' mapped to destinationKey '%@' on class %@", sourceKeyPath, destinationKey, NSStringFromClass([self class])];
         }
     }
@@ -386,9 +380,18 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     }
 }
 
-- (BOOL)fwt_isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKey equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey
+- (BOOL)fwt_isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKeyPath equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey
 {
     // default implementation
+    
+    if (!destinationValue) {
+        if (sourceValue == [NSNull null]) {
+            return YES;
+        } else {
+            [NSException raise:NSInternalInconsistencyException format:@"Failed to transform '%@' with sourceKeyPath '%@' for destinationKey '%@'", sourceValue, sourceKeyPath, destinationKey];
+            return NO;
+        }
+    }
     
     NSEntityDescription *entityDescription = self.entity;
     NSAttributeDescription *attributeDescription = [entityDescription attributesByName][destinationKey];
@@ -407,7 +410,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         case NSDoubleAttributeType:
         case NSFloatAttributeType:
         {
-             return [[destinationValue stringValue] isEqualToString:sourceValue];
+            return [[destinationValue stringValue] isEqualToString:sourceValue];
         }
             
         case NSBooleanAttributeType:
@@ -444,7 +447,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
             
             BOOL areEqual = [transformedDestinationValue isEqual:sourceValue];
             if (!areEqual) {
-                [NSException raise:NSInternalInconsistencyException format:@"(%@: %@ -> %@) sourceValue '%@' not equal to transformed destinationValue '%@'", NSStringFromClass([self class]), sourceKey, destinationKey, sourceValue, transformedDestinationValue];
+                [NSException raise:NSInternalInconsistencyException format:@"(%@: %@ -> %@) sourceValue '%@' not equal to transformed destinationValue '%@'", NSStringFromClass([self class]), sourceKeyPath, destinationKey, sourceValue, transformedDestinationValue];
             }
             
             return areEqual;
