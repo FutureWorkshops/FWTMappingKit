@@ -339,7 +339,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
                 [NSException raise:NSInternalInconsistencyException format:@"Object mapped from '%@' to '%@' should be an array", sourceKeyPath, destinationKey];
             }
             
-            [self _fwt_verifyPropertyMappingFromArray:array toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
+            [[self class] fwt_verifyMappingFromArray:array toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
             
             return;
         }
@@ -350,13 +350,13 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     // verify array
     else if ([sourceValue isKindOfClass:[NSArray class]]) {
         
-        [self _fwt_verifyPropertyMappingFromArray:sourceValue toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
+        [[self class] fwt_verifyMappingFromArray:sourceValue toMappedSet:destinationValue forMappingKey:relationshipMappingKey];
     }
 }
 
-- (void)_fwt_verifyPropertyMappingFromArray:(NSArray *)deserializedArray
-                                toMappedSet:(NSSet *)mappedSet
-                              forMappingKey:(NSString *)mappingKey;
++ (void)fwt_verifyMappingFromArray:(NSArray *)deserializedArray
+                       toMappedSet:(NSSet *)mappedSet
+                     forMappingKey:(NSString *)mappingKey;
 {
     if ([deserializedArray count] != [mappedSet count]) {
         [NSException raise:NSInternalInconsistencyException format:@"%@ and %@ should contain the same number of items", deserializedArray, mappedSet];

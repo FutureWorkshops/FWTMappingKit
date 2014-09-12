@@ -40,6 +40,11 @@
 - (void)fwt_verifyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
                                   forMappingKey:(NSString *)mappingKey;
 
+// verify mappings for a source collection mapped to a one-to-many relationship. The mapped objects must have implemented collectionIndex in order to match them correctly back to the source collection
++ (void)fwt_verifyMappingFromArray:(NSArray *)deserializedArray
+                       toMappedSet:(NSSet *)mappedSet
+                     forMappingKey:(NSString *)mappingKey;
+
 // override to provide custom property equivalence checking during verification, e.g. BOOL values can come from a variety of string sources, 'yes', 'y', 'true', '1', etc.
 // the default implementation provides some basic checking, i.e. you can call super for properties where custom checking is not required
 - (BOOL)fwt_isSourceValue:(id)sourceValue withSourceKeyPath:(NSString *)sourceKey equalToDestinationValue:(id)destinationValue withDestinationKey:(NSString *)destinationKey forMappingKey:(NSString *)mappingKey;
