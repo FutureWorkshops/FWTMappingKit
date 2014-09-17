@@ -1,14 +1,14 @@
 //
-//  FWTMappingConfiguration.m
+//  FWTCustomPropertyMapping.m
 //  FWTMappingKit
 //
 //  Created by Jonathan Flintham on 22/08/2014.
 //
 //
 
-#import "FWTMappingConfiguration.h"
+#import "FWTCustomPropertyMapping.h"
 
-@interface FWTMappingConfiguration ()
+@interface FWTCustomPropertyMapping ()
 
 @property (nonatomic, strong, readwrite) NSString *sourceKeyPath;
 @property (nonatomic, strong, readwrite) NSString *destinationKey;
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation FWTMappingConfiguration
+@implementation FWTCustomPropertyMapping
 
 - (instancetype)initWithSourceKeyPath:(NSString *)sourceKeyPath mappedToDestinationKey:(NSString *)destinationKey withRelationshipMappingKey:(NSString *)relationshipMappingKey
 {
@@ -46,7 +46,7 @@
 {
     NSMutableArray *configurations = [NSMutableArray arrayWithCapacity:[dictionary count]];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *sourceKeyPath, NSString *destinationKey, BOOL *stop) {
-        FWTMappingConfiguration *configuration = [[FWTMappingConfiguration alloc] initWithSourceKeyPath:sourceKeyPath mappedToDestinationKey:destinationKey withRelationshipMappingKey:nil];
+        FWTCustomPropertyMapping *configuration = [[FWTCustomPropertyMapping alloc] initWithSourceKeyPath:sourceKeyPath mappedToDestinationKey:destinationKey withRelationshipMappingKey:nil];
         [configurations addObject:configuration];
     }];
     
