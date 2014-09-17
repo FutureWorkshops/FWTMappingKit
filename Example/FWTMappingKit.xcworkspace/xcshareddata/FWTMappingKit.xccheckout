@@ -10,29 +10,29 @@
 	<string>FWTMappingKit</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>EB8EE888-749B-4F07-AB19-B5478E3B2DA5</key>
+		<key>1F111D42BCBEB9BC8F0C5520534AD29B2BD8D899</key>
 		<string>ssh://github.com/FutureWorkshops/FWTMappingKit.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Example/FWTMappingKit.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>EB8EE888-749B-4F07-AB19-B5478E3B2DA5</key>
+		<key>1F111D42BCBEB9BC8F0C5520534AD29B2BD8D899</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/FutureWorkshops/FWTMappingKit.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>EB8EE888-749B-4F07-AB19-B5478E3B2DA5</string>
+	<string>1F111D42BCBEB9BC8F0C5520534AD29B2BD8D899</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>EB8EE888-749B-4F07-AB19-B5478E3B2DA5</string>
+			<string>1F111D42BCBEB9BC8F0C5520534AD29B2BD8D899</string>
 			<key>IDESourceControlWCCName</key>
 			<string>FWTMappingKit</string>
 		</dict>
