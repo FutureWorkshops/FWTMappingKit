@@ -13,9 +13,9 @@
 /**
  `NSManagedObject+FWTRestKitMapping` is an extension of `NSManagedObject` designed to produce `RKEntityMapping`s by reflecting on the object's `NSEntityDescription`.
  
- The key method for acquiring an `RKEntityMapping` is `fwt_entityMappingForKey:`, and various other methods provide additional options for customisation of the mapping.
+ The key method for acquiring an `RKEntityMapping` is `fwt_entityMappingForMappingKey:`, and various other methods provide additional options for customisation of the mapping.
  
- Mapping keys provide a method of differentiating mapping customisation for different contexts, e.g. different network responses can sometimes return equivalent objects, but with variations in the keys meant to represent otherwise equal properties. For such cases you can provide different mapping keys to `fwt_entityMappingForKey:`, and then test for these in your overridden implementation of `fwt_customPropertyMappingsForMappingKey:` in order to return different property mappings.
+ Mapping keys provide a method of differentiating mapping customisation for different contexts, e.g. different network responses can sometimes return equivalent objects, but with variations in the keys meant to represent otherwise equal properties. For such cases you can provide different mapping keys to `fwt_entityMappingForMappingKey:`, and then test for these in your overridden implementation of `fwt_customPropertyMappingsForMappingKey:` in order to return different property mappings.
  */
 
 @interface NSManagedObject (FWTRestKitMapping)
@@ -68,7 +68,7 @@
  
  @return The RKEntityMapping after additional configuration has been performed.
  */
-+ (RKEntityMapping *)fwt_entityMappingForKey:(NSString *)mappingKey NS_REQUIRES_SUPER;
++ (RKEntityMapping *)fwt_entityMappingForMappingKey:(NSString *)mappingKey;
 
 /**
  Optionally override this to configure the mapping for a nesting attribute key (i.e. using RKEntityMapping method `addAttributeMappingFromKeyOfRepresentationToAttribute:`).
@@ -76,6 +76,13 @@
  @return The key to which the nesting attribute value should be mapped into.
  */
 + (NSString *)fwt_nestingAttributeKey;
+
+/**
+ Optionally override this to perform further configuration of the mapping, e.g. to set identificationAttributes.
+ 
+ @param mappingKey Mapping keys provide context for the current mapping, allowing the mapping to be configured differently for different responses, if required.
+ */
++ (void)fwt_configureAdditionalInfoForMapping:(RKEntityMapping *)mapping forMappingKey:(NSString *)mappingKey NS_REQUIRES_SUPER;
 
 /**
  Optionally override this to provide custom property mappings (instances of `FWTCustomPropertyMapping`) to aid mapping back and forth between source and destination respresentations.
