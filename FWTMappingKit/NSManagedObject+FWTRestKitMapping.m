@@ -351,13 +351,20 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         return;
     
     SEL collectionIndexSelector = NSSelectorFromString(@"collectionIndex");
-    if (![[mappedSet anyObject] respondsToSelector:collectionIndexSelector]) {
-        [NSException raise:NSInternalInconsistencyException format:@"Mapped collection objects of class %@ must implement collectionIndex property", NSStringFromClass([[mappedSet anyObject] class])];
+    if (![mappedSet isKindOfClass:[NSOrderedSet class]] && ![[mappedSet anyObject] respondsToSelector:collectionIndexSelector]) {
+        [NSException raise:NSInternalInconsistencyException format:@"Mapped collection objects of class %@ must be ordered sets or must implement collectionIndex property", NSStringFromClass([[mappedSet anyObject] class])];
         return;
     }
     
-    NSArray *destinationArray = [mappedSet sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"collectionIndex" ascending:YES]]];
+    NSArray *destinationArray = nil;
     
+    if ([mappedSet isKindOfClass:[NSOrderedSet class]]) {
+        destinationArray = [(NSOrderedSet *)mappedSet array];
+    }
+    else {
+        destinationArray = [mappedSet sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"collectionIndex" ascending:YES]]];
+    }
+
     for (NSDictionary *sourceObject in deserializedArray) {
         
         NSUInteger index = [deserializedArray indexOfObject:sourceObject];
