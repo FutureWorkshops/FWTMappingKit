@@ -299,7 +299,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         if ([destinationValue isKindOfClass:[NSSet class]]) {
             
             if ([destinationValue count] == 0) {
-                [NSException raise:NSInternalInconsistencyException format:@"There should be at least one object mapped from collection %@ to relationship %@", sourceValue, destinationValue];
+                [NSException raise:NSInternalInconsistencyException format:@"There should be at least one object mapped from collection at '%@' to relationship '%@'", sourceKeyPath, destinationKey];
             }
             
             NSArray *array = nil;
@@ -344,7 +344,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
                      forMappingKey:(NSString *)mappingKey;
 {
     if ([deserializedArray count] != [mappedSet count]) {
-        [NSException raise:NSInternalInconsistencyException format:@"%@ and %@ should contain the same number of items", deserializedArray, mappedSet];
+        [NSException raise:NSInternalInconsistencyException format:@"Source collection and mapped set should contain the same number of items"];
     }
     
     if ([deserializedArray count] == 0)

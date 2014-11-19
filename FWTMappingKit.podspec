@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "FWTMappingKit"
-  s.version          = "0.2.1"
+  s.version          = "0.2.2"
   s.summary          = "FWTMappingKit - RestKit mapping via CoreData model reflection."
   s.homepage         = "https://github.com/FutureWorkshops/FWTMappingKit"
   s.license          = 'MIT'
