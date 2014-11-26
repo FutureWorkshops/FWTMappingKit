@@ -39,8 +39,6 @@
  @param sourceKeyPath The keyPath on the source object from which a value will be retrieved, transformed, and then mapped to the destination object.
  @param destinationKey The key on the destination object to which the transformed value from the source object will be mapped. Optionally provide `nil` or empty to explicitely ignore `sourceKeyPath` during the mapping process, i.e. if you do not want the property to be mapped automatically via entity reflection.
  
- @warning `sourceKeyPath` must not be `nil` or empty.
- 
  @return The newly initialised `FWTCustomPropertyMapping` object.
  */
 - (instancetype)initWithSourceKeyPath:(NSString *)sourceKeyPath mappedToDestinationKey:(NSString *)destinationKey;
@@ -54,7 +52,6 @@
  
  @return The newly initialised `FWTCustomPropertyMapping` object.
  
- @warning `sourceKeyPath` must not be `nil` or empty.
  @warning `destinationKey` should refer to a relationship on the destination object
  */
 - (instancetype)initWithSourceKeyPath:(NSString *)sourceKeyPath mappedToDestinationKey:(NSString *)destinationKey withRelationshipMappingKey:(NSString *)relationshipMappingKey;

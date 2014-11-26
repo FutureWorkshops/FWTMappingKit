@@ -205,6 +205,10 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 - (void)fwt_verifyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
                                   forMappingKey:(NSString *)mappingKey
 {
+    if ([deserializedObject isKindOfClass:[NSString class]]) {
+        deserializedObject = @{@"description": deserializedObject}; // deal with arrays of strings in the JSON
+    }
+    
     if (![deserializedObject isKindOfClass:[NSDictionary class]]) {
         [NSException raise:NSInternalInconsistencyException format:@"deserializedObject should be a dictionary"];
     }

@@ -22,8 +22,6 @@
 {
     self = [super init];
     if (self) {
-        NSAssert([sourceKeyPath length] > 0, @"Must provide valid sourceKeyPath"); // a nil or empty destinationKey means that this sourceKeyPath will not be mapped, i.e. ignored
-        
         self.sourceKeyPath = sourceKeyPath;
         self.destinationKey = destinationKey;
         self.relationshipMappingKey = relationshipMappingKey;
