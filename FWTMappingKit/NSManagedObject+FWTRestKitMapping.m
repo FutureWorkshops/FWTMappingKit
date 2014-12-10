@@ -59,14 +59,6 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 
 + (NSString *)_fwt_sourceKeyPathForDestinationKey:(NSString *)destinationKey mappingKey:(NSString *)mappingKey relationshipMappingKey:(NSString **)relationshipMappingKey
 {
-    NSString *destinationKeyForSourceStringArrayWithMappingKey = [self fwt_destinationKeyForSourceStringArrayForMappingKey:mappingKey];
-    if (destinationKeyForSourceStringArrayWithMappingKey) {
-        if ([destinationKey isEqualToString:destinationKeyForSourceStringArrayWithMappingKey]) {
-            return @"description"; // so RestKit can correctly interrogate the string for its value
-        }
-        return nil; // we don't want to reflect any other properties when the source is an array of strings
-    }
-    
     NSArray *customMappingConfigurations = [self fwt_customPropertyMappingsForMappingKey:mappingKey];
     
     __block NSString *sourceKeyPath = nil;
@@ -115,6 +107,12 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 
 + (void)_fwt_configureAttributesForMapping:(RKEntityMapping *)mapping forMappingKey:(NSString *)mappingKey
 {
+    NSString *destinationKeyForSourceStringArrayWithMappingKey = [self fwt_destinationKeyForSourceStringArrayForMappingKey:mappingKey];
+    if (destinationKeyForSourceStringArrayWithMappingKey) {
+        [mapping addPropertyMapping:[RKAttributeMapping attributeMappingFromKeyPath:nil toKeyPath:destinationKeyForSourceStringArrayWithMappingKey]];
+        return;
+    }
+    
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:[[[RKObjectManager sharedManager] managedObjectStore] mainQueueManagedObjectContext]];
     
     NSDictionary *attributesDict = [entityDescription attributesByName];
@@ -133,6 +131,11 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 
 + (void)_fwt_configureRelationshipsForMapping:(RKEntityMapping *)mapping forMappingKey:(NSString *)mappingKey
 {
+    NSString *destinationKeyForSourceStringArrayWithMappingKey = [self fwt_destinationKeyForSourceStringArrayForMappingKey:mappingKey];
+    if (destinationKeyForSourceStringArrayWithMappingKey) {
+        return;
+    }
+    
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass([self class])
                                                          inManagedObjectContext:[[[RKObjectManager sharedManager] managedObjectStore] mainQueueManagedObjectContext]];
     
