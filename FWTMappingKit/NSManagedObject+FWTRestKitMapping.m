@@ -59,6 +59,14 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
 
 + (NSString *)_fwt_sourceKeyPathForDestinationKey:(NSString *)destinationKey mappingKey:(NSString *)mappingKey relationshipMappingKey:(NSString **)relationshipMappingKey
 {
+    NSString *destinationKeyForSourceStringArrayWithMappingKey = [self fwt_destinationKeyForSourceStringArrayForMappingKey:mappingKey];
+    if (destinationKeyForSourceStringArrayWithMappingKey) {
+        if ([destinationKey isEqualToString:destinationKeyForSourceStringArrayWithMappingKey]) {
+            return @"description"; // so RestKit can correctly interrogate the string for its value
+        }
+        return nil; // we don't want to reflect any other properties when the source is an array of strings
+    }
+    
     NSArray *customMappingConfigurations = [self fwt_customPropertyMappingsForMappingKey:mappingKey];
     
     __block NSString *sourceKeyPath = nil;
@@ -181,7 +189,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         [self _fwt_configureRelationshipsForMapping:mapping forMappingKey:mappingKey];
         [self fwt_configureAdditionalInfoForMapping:mapping forMappingKey:mappingKey];
         
-        NSString *nestingAttibuteKey = [self fwt_nestingAttributeKey];
+        NSString *nestingAttibuteKey = [self fwt_nestingAttributeKeyForMappingKey:mappingKey];
         if (nestingAttibuteKey) {
             [mapping fwt_configureForNestingAttributeKey:nestingAttibuteKey];
         }
@@ -190,7 +198,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     return mapping;
 }
 
-+ (NSString *)fwt_nestingAttributeKey
++ (NSString *)fwt_nestingAttributeKeyForMappingKey:(NSString *)mappingKey
 {
     return nil;
 }
@@ -200,22 +208,37 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
     return nil;
 }
 
++ (NSString *)fwt_destinationKeyForSourceStringArrayForMappingKey:(NSString *)mappingKey
+{
+    return nil;
+}
+
 #pragma mark - Verification
 
 - (void)fwt_verifyMappingFromDeserializedObject:(NSDictionary *)deserializedObject
                                   forMappingKey:(NSString *)mappingKey
 {
+    NSString *destinationKeyForSourceStringArrayWithMappingKey = nil;
+    NSString *nestingAttributeKey = nil;
+    NSArray *customMappingConfigurations = nil;
+    
     if ([deserializedObject isKindOfClass:[NSString class]]) {
+        destinationKeyForSourceStringArrayWithMappingKey = [[self class] fwt_destinationKeyForSourceStringArrayForMappingKey:mappingKey];
+        if (!destinationKeyForSourceStringArrayWithMappingKey) {
+            NSLog(@"Ignoring deserializedObject as it is a string (value: '%@'). Provide a value to fwt_destinationKeyForSourceStringArrayForMappingKey: in order to describe how this should be mapped to an object");
+            return;
+        }
         deserializedObject = @{@"description": deserializedObject}; // deal with arrays of strings in the JSON
+    }
+    else {
+        nestingAttributeKey = [[self class] fwt_nestingAttributeKeyForMappingKey:mappingKey];
+        customMappingConfigurations = [[self class] fwt_customPropertyMappingsForMappingKey:mappingKey];
     }
     
     if (![deserializedObject isKindOfClass:[NSDictionary class]]) {
         [NSException raise:NSInternalInconsistencyException format:@"deserializedObject should be a dictionary"];
     }
-    
-    NSString *nestingAttributeKey = [[self class] fwt_nestingAttributeKey];
-    NSArray *customMappingConfigurations = [[self class] fwt_customPropertyMappingsForMappingKey:mappingKey];
-    
+
     for (NSString *rootSourceKey in [deserializedObject allKeys]) {
         
         __block BOOL hasVerifiedMappingForRootSourceKey = NO;
@@ -223,7 +246,12 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
         NSString *destinationKey = rootSourceKey;
         NSString *relationshipMappingKey = nil;
         
-        if ([rootSourceKey isEqualToString:FWTMappingKitNestingAttributeVerificationKey]) {
+        if (destinationKeyForSourceStringArrayWithMappingKey) {
+            
+            sourceKeyPath = rootSourceKey;
+            destinationKey = destinationKeyForSourceStringArrayWithMappingKey;
+        }
+        else if ([rootSourceKey isEqualToString:FWTMappingKitNestingAttributeVerificationKey]) {
             
             if (!nestingAttributeKey)
                 continue; // we only care about this property if the mapping is configured for it
@@ -310,7 +338,7 @@ static NSString * const FWTMappingKitNestingAttributeVerificationKey = @"FWTNest
             
             // check for nesting attribute key collections
             id sampleObject = [destinationValue anyObject];
-            if ([[sampleObject class] fwt_nestingAttributeKey]) {
+            if ([[sampleObject class] fwt_nestingAttributeKeyForMappingKey:relationshipMappingKey]) {
                 
                 array = [NSMutableArray arrayWithCapacity:[sourceValue count]];
                 for (NSString *key in [sourceValue allKeys])

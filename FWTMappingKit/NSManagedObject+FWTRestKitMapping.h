@@ -73,9 +73,11 @@
 /**
  Optionally override this to configure the mapping for a nesting attribute key (i.e. using RKEntityMapping method `addAttributeMappingFromKeyOfRepresentationToAttribute:`).
  
+ @param mappingKey Mapping keys provide context for the current mapping, allowing the mapping to be configured differently for different responses, if required.
+ 
  @return The key to which the nesting attribute value should be mapped into.
  */
-+ (NSString *)fwt_nestingAttributeKey;
++ (NSString *)fwt_nestingAttributeKeyForMappingKey:(NSString *)mappingKey;
 
 /**
  Optionally override this to perform further configuration of the mapping, e.g. to set identificationAttributes.
@@ -97,6 +99,19 @@
  @see -fwt_destinationToSourceKeyValueTransformer
  */
 + (NSArray *)fwt_customPropertyMappingsForMappingKey:(NSString *)mappingKey;
+
+/**
+ Optionally override this to deal with irregular string array representations. Each string will be treated as the property value on an object in the mapped set, specified by the returned key.
+ 
+ E.g. If you want to map an array of surnames to a set of 'Person' objects, you would return 'surname' here.
+ 
+ @param mappingKey Mapping keys provide context for the current mapping, allowing the RKEntityMapping to be configured differently for different responses, if required.
+ 
+ @return The key on the destination objects to map the individual string values to.
+ 
+ @warning If you return non-nil here, then returned values to 'fwt_nestingAttributeKey' and 'fwt_customPropertyMappingsForMappingKey:' are invalid and will be ignored.
+ */
++ (NSString *)fwt_destinationKeyForSourceStringArrayForMappingKey:(NSString *)mappingKey;
 
 /// @name Property mapping verification
 
